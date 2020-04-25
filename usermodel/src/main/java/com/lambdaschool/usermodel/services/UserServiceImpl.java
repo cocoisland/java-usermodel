@@ -1,5 +1,6 @@
 package com.lambdaschool.usermodel.services;
 
+import com.lambdaschool.usermodel.exceptions.ResourceFoundException;
 import com.lambdaschool.usermodel.models.Role;
 import com.lambdaschool.usermodel.models.User;
 import com.lambdaschool.usermodel.models.UserRoles;
@@ -90,6 +91,12 @@ public class UserServiceImpl implements UserService
     @Override
     public User save(User user)
     {
+    	if (userrepos.findByUsername(user.getUsername()
+                .toLowerCase()) != null)
+    		{
+    			throw new ResourceFoundException(user.getUsername() + " is already taken!");
+    		}
+    	
         User newUser = new User();
 
         if (user.getUserid() != 0)

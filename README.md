@@ -1,36 +1,36 @@
-# Java User Model
+# Exception, Logging, Actuator
 
-A student that completes this project shows that they can:
+## Exception
+To control the quantity and quality of message(debug,trace,info,error) being
+display in console, logs or client display.
 
-- Add additional fields to a Many to Many Join Table
-- Add standard auditing fields to each table
-- Use SQL, JPA and Hibernate to perform custom query operations on a RDBMS through a Spring Application
-- Use SQL, JPA and Hibernate to perform custom data manipulation operations on a RDBMS through a Spring Application
-- Implement default Swagger documentation
+1. Create model/ErrorDetail object.
+2. Create exception/ValidationError exception object.
+3. Create handlers/RestExceptionHandler
+	* handle EntityNotFoundException from services/UserServiceImpl.java, replacing default messages with ErrorDetail object messages.
+4. Create exception/ResourceFoundException to replace UserServiceImpl/save.
+	* Create unique serialVersionUID. Each serializeable object must have unique serialized version UID. The first serialized object is default serialized
+UID, then any next serialized object must be explicitly UID, eg 1L, 2L, 3L etc.
+5. To take control of exception from spring boot, so that custom exception can be handled,
+	* Turn off spring boot automatic exception handler.
+	 	application.properties -> server.error.whitelabel.enabled=false
+	* turn on EnableWebMvc in UserModelApplication
+	* get dispatcherServlet to throw exception if no handler is found from 
+UserModelApplication.
 
-## Introduction
 
-This is a basic database scheme with users, user emails, and user roles. This Java Spring REST API application will provide endpoints for clients to read various data sets contained in the applications data. This application will also form the basis of a user authentication application developed elsewhere in the course
 
-### Database layout
+## Actuator - performance monitoring ports
+1. add actuator dependency in pom.xml
+	* default on, but not readable unless specifically enabled in endpoints.
+2. application.properties -> management.endpoints 
+3. actuator port
+	* localhost:2019/actuator
+	* localhost:2019/actuator/health
 
-The table layout are as follows
+## Logging (level- Trace, Debug, Info, Warn, Error, Off)
+1. add slf4j dependency in pom.xml
+2. create logback-spring.xml  // if existed, spring will use it to format output.
+3. called LoggerFactory logger in UserController to initial logging message.
 
-* User is the driving table.
-* Useremails have a Many-To-One relationship with User. Each User has many user email combinations. Each user email combination has only one User.
-* Roles have a Many-To-Many relationship with Users.
 
-![Image of Database Layout](usersdb.png)
-
-Notice that this database layout is similar to the layout for the java-crudyrestaurants application.
-
-| Type          | Crudy Restaurants        | Usermodel |
-|---------------|--------------------------|-----------|
-| Driving Table | Restaurants              | Users     |
-| One to Many   | Restaurants -> Menus     | Users -> Useremails |
-| Many to Many  | Restaurants <-> Payments | Users <-> Roles |
-
-Two different applications exist
-
-- usermodel_initial - a starting version of the application that resembles the Crudy Restaurant application developed elsewhere in the course.
-- usermodel - the finished version with many "bells and whistles" added

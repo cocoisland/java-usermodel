@@ -1,7 +1,11 @@
 package com.lambdaschool.usermodel.controllers;
 
+import com.lambdaschool.usermodel.handlers.RestExceptionHandler;
 import com.lambdaschool.usermodel.models.User;
 import com.lambdaschool.usermodel.services.UserService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,6 +26,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController
 {
+	private static final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
     /**
      * Using the User service to process user data
      */
@@ -36,8 +42,11 @@ public class UserController
      */
     @GetMapping(value = "/users",
         produces = {"application/json"})
-    public ResponseEntity<?> listAllUsers()
+    public ResponseEntity<?> listAllUsers(HttpServletRequest request)
     {
+    	logger.trace(request.getMethod()
+                .toUpperCase() + " " + request.getRequestURI() + " accessed");
+
         List<User> myUsers = userService.findAll();
         return new ResponseEntity<>(myUsers,
             HttpStatus.OK);
